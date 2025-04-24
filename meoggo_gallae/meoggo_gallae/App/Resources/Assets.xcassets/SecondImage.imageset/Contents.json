@@ -1,12 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "Group 427319221.svg",
+      "filename" : "Ff.png",
       "idiom" : "universal"
     }
   ],
   "info" : {
     "author" : "xcode",
     "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
   }
 }
