@@ -11,7 +11,9 @@ import SwiftUI
 struct meoggo_gallaeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack {
+                OnboardingFirstView()
+            }
         }
     }
 }

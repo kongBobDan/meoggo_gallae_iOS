@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct OnboardingSecondView: View {
+    @State private var isActive = false
+
     var body: some View {
         ZStack {
             Image(Asset.Onboarding.second)
@@ -22,10 +24,24 @@ struct OnboardingSecondView: View {
                 Spacer()
             }
             .textStyle(TextStyle.title1.bold)
+            
+            NavigationLink(
+                destination: OnboardingThirdView(),
+                isActive: $isActive,
+                label: { EmptyView() }
+            )
+        }
+        .navigationBarBackButtonHidden()
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                isActive = true
+            }
         }
     }
 }
 
 #Preview {
-    OnboardingSecondView()
+    NavigationStack {
+        OnboardingSecondView()
+    }
 }

@@ -21,26 +21,29 @@ struct MGButton: View {
 
     var body: some View {
         Button(action: action) {
-            if size == .medium {
-                HStack {
-                    if let left = licon {
-                        Image(systemName: left)
-                            .resizable()
-                            .frame(width: 24, height: 24)
+            Group {
+                if size == .medium {
+                    HStack {
+                        if let left = licon {
+                            Image(systemName: left)
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                        }
+                        Text(title)
+                        if let right = ricon {
+                            Image(systemName: right)
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                        }
                     }
+                } else {
                     Text(title)
-                    if let right = ricon {
-                        Image(systemName: right)
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                    }
                 }
-            } else {
-                Text(title)
             }
+            .frame(maxWidth: .infinity)
+            .frame(height: style.height)
         }
         .textStyle(style.textStyle)
-        .frame(maxWidth: .infinity, minHeight: style.height)
         .foregroundColor(style.textColor)
         .background(style.backgroundColor)
         .cornerRadius(6)
@@ -50,3 +53,4 @@ struct MGButton: View {
         MGButtonStyle(type: type, size: size, color: color)
     }
 }
+

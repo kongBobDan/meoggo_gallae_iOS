@@ -10,22 +10,9 @@
 		AF354F2F2DB0CBE600569C37 /* meoggo_gallae.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = meoggo_gallae.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		AFC2579B2DBA196D0010DFC3 /* Exceptions for "meoggo_gallae" folder in "meoggo_gallae" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"meoggo-gallae-Info.plist",
-			);
-			target = AF354F2E2DB0CBE600569C37 /* meoggo_gallae */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AF354F312DB0CBE600569C37 /* meoggo_gallae */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				AFC2579B2DBA196D0010DFC3 /* Exceptions for "meoggo_gallae" folder in "meoggo_gallae" target */,
-			);
 			path = meoggo_gallae;
 			sourceTree = "<group>";
 		};
