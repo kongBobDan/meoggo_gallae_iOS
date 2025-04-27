@@ -8,30 +8,34 @@
 import SwiftUI
 
 struct OnboardingFourth2verView: View {
+    @State private var isActive = false
+    
     var body: some View {
         ZStack {
             Image(Asset.Onboarding.fourth.ver2)
                 .resizable()
-                .frame(width: 491, height: 691)
+                .frame(width: 530.68, height: 691)
                 .offset(y: 170)
             VStack {
                 Spacer()
                     .frame(height: 100)
-                Text("너무하네.. 정말...")
-                    .textStyle(TextStyle.title1.bold)
-                Text("그래도 먹고갈래는 해줄꺼지?")
-                    .textStyle(TextStyle.title1.bold)
+                Text("그래!")
+                Text("우리 같이 먹고갈래로 놀자!")
                 Spacer()
-                MGButton (
-                    title: "당연하지!",
-                    type: .enabled,
-                    size: .medium,
-                    color: .dark,
-                    action: {}
-                )
             }
-            .frame(width: 333)
-            .padding(.bottom)
+            .textStyle(TextStyle.title1.bold)
+            
+            NavigationLink(
+                destination: HomeView(),
+                isActive: $isActive,
+                label: { EmptyView() }
+            )
+        }
+        .navigationBarBackButtonHidden()
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                isActive = true
+            }
         }
     }
 }

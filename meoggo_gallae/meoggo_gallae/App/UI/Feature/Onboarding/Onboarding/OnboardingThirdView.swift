@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct OnboardingThirdView: View {
+    @State private var next1: Bool = false
+    @State private var next2: Bool = false
+    
     var body: some View {
         ZStack {
             Image(Asset.Onboarding.third)
@@ -33,20 +36,31 @@ struct OnboardingThirdView: View {
                         type: .enabled,
                         size: .medium,
                         color: .dark,
-                        action: {}
+                        action: {
+                            next1 = true
+                        }
                     )
-                    MGButton (
-                        title: "뭐야 이 징그러운건;",
-                        type: .enabled,
-                        size: .medium,
-                        color: .light,
-                        action: {}
-                    )
+                        MGButton (
+                            title: "뭐야 이 징그러운건;",
+                            type: .enabled,
+                            size: .medium,
+                            color: .light,
+                            action: {
+                                next2 = true
+                            }
+                        )
                 }
                 .frame(width: 333)
                 .padding(.bottom)
+                NavigationLink(destination: OnboardingFourth2verView(), isActive: $next1) {
+                    EmptyView()
+                }
+                NavigationLink(destination: OnboardingFourth1verView(), isActive: $next2) {
+                    EmptyView()
+                }
             }
         }
+        .navigationBarBackButtonHidden()
     }
 }
 
