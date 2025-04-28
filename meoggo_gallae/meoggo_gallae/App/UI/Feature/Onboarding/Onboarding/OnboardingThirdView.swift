@@ -55,6 +55,7 @@ struct OnboardingThirdView: View {
                 NavigationLink(destination: OnboardingFourth2verView(), isActive: $next1) {
                     EmptyView()
                 }
+                
                 NavigationLink(destination: OnboardingFourth1verView(), isActive: $next2) {
                     EmptyView()
                 }
