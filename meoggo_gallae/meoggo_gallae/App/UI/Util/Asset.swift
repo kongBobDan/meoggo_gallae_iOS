@@ -20,4 +20,5 @@ class Asset {
         static let font = "LogoFont"
         static let icon = "LogoIcon"
     }
+    static let home = "HomeImage"
 }
