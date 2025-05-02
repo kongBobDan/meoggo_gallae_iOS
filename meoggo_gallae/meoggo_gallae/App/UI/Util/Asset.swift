@@ -20,5 +20,15 @@ class Asset {
         static let font = "LogoFont"
         static let icon = "LogoIcon"
     }
-    static let home = "HomeImage"
+    struct Home {
+        static let confrontation = "ConfrontationImage"
+        static let morning = "MorningIcon"
+        static let lunch = "LunchIcon"
+        static let dinner = "DinnerIcon"
+        static let heart = "HeartIcon"
+        struct Camera {
+            static let check = "CameraCheckIcon"
+            static let next = "CameraNextIcon"
+        }
+    }
 }

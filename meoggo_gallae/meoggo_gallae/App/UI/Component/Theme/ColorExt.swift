@@ -77,8 +77,8 @@ extension Color {
     }
 
     static let p = Palette_p()
-    static let b = Palette_g()
-    static let g = Palette_b()
+    static let b = Palette_b()
+    static let g = Palette_g()
     static let s = Palette_s()
 }
 
