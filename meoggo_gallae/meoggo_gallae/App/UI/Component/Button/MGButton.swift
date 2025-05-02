@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - PLEPButton View
+
 struct MGButton: View {
     let title: String
     let type: MGButtonType
