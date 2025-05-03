@@ -30,5 +30,6 @@ class Asset {
             static let check = "CameraCheckIcon"
             static let next = "CameraNextIcon"
         }
+        static let calendar = "CalendarIcon"
     }
 }
