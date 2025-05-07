@@ -32,4 +32,6 @@ class Asset {
         }
         static let calendar = "CalendarIcon"
     }
+    static let back = "BackButtonIcon"
+    static let foodselect = "FoodSelectImage"
 }
