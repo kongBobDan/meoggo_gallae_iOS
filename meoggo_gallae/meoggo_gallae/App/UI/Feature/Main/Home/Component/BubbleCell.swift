@@ -9,12 +9,13 @@ import SwiftUI
 
 struct BubbleCell: View {
     let text: String
-    let imageName: String?
+    var imageName: String?
+    let type: BubbleCellType
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             Triangle()
-                .foregroundColor(.p[800])
+                .foregroundColor(style.bgcolor)
                 .frame(width: 25, height: 25)
                 .padding(.trailing, 15)
                 .padding(.top, 10)
@@ -23,6 +24,7 @@ struct BubbleCell: View {
             HStack(spacing: 4) {
                 Text(text)
                     .textStyle(TextStyle.Caption1.default)
+                    .foregroundColor(style.textcolor)
                 if let imageName {
                     Image(imageName)
                         .resizable()
@@ -32,8 +34,11 @@ struct BubbleCell: View {
             .padding(.horizontal, 20)
             .frame(height: 26)
             .foregroundColor(.b[0])
-            .background(Color.p[800])
+            .background(style.bgcolor)
             .cornerRadius(5)
         }
+    }
+    private var style: BubbleCellStyle {
+        BubbleCellStyle(type: type)
     }
 }

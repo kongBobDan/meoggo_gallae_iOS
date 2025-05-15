@@ -107,6 +107,9 @@ extension TextStyle {
         static let text = pretendardStyle(size: 20, weight: .semibold, lineHeight: 24)
         static let icon = pretendardStyle(size: 23, weight: .semibold, lineHeight: 24)
     }
+    
+    static let foodname = TextStyle(font: .custom("OTHakgyoansimRikodeoR", size: 30), lineHeight: 36, fontSize: 30
+    )
 
     static let body = Body.self
     static let largebodycopy = LargeBodyCopy.self
