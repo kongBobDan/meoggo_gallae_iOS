@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FoodSelectView: View {
+struct FoodSelectOnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var round: String = ""
     
@@ -17,7 +17,7 @@ struct FoodSelectView: View {
             VStack {
                 Text("최고의 급식 메뉴를")
                 Text("뽑아주세요!")
-                Image(Asset.foodselect)
+                Image(Asset.FoodSelect.onboarding)
                     .resizable()
                     .frame(width: 422 , height: 375)
                 Spacer()
@@ -53,7 +53,7 @@ struct FoodSelectView: View {
                         size: .medium,
                         color: .dark,
                         action: {
-                            //                        next = true
+                            
                         }
                     )
                     .padding(.horizontal, 40)
@@ -71,5 +71,5 @@ struct FoodSelectView: View {
 }
 
 #Preview {
-    FoodSelectView()
+    FoodSelectOnboardingView()
 }

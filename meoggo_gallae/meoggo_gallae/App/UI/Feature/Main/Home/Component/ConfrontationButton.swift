@@ -20,11 +20,17 @@ struct ConfrontationButton: View {
                         .padding(.trailing)
                     Text("하러가기 >")
                         .padding(.trailing)
-                    BubbleCell(text: "너 이뻐하실 듯", imageName: Asset.Home.heart)
+                    BubbleCell(
+                        text: "너 이뻐하실 듯",
+                        type: .home
+                    )
                 }
                 .padding(.leading, 75)
                 .textStyle(TextStyle.body.bold)
-                BubbleCell(text: "이거 하면 영양사 쌤이", imageName: nil)
+                BubbleCell(
+                    text: "이거 하면 영양사 쌤이",
+                    type: .home
+                )
             }
             .padding(.leading, 65)
         }

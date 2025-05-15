@@ -33,5 +33,34 @@ class Asset {
         static let calendar = "CalendarIcon"
     }
     static let back = "BackButtonIcon"
-    static let foodselect = "FoodSelectImage"
+    
+    struct FoodSelect {
+        static let onboarding = "FoodSelectOnboardingImage"
+        static let ing = "FoodSelectingImage"
+        static let text = "VSTextImage"
+    }
+    
+    struct Food {
+        static let dummy1 = "FoodDummyImage1"
+        static let dummy2 = "FoodDummyImage2"
+    }
+    
+    struct Result {
+        struct Good {
+            static let MG = "ResultGoodImage1"
+            static let text = "ResultGoodImage2"
+        }
+        
+        struct Soso {
+            static let MG = "ResultSosoImage1"
+            static let text = "ResultSosoImage2"
+        }
+        
+        static let bad = "ResultBadImage"
+    }
+    
+    struct Star {
+        static let empty = "EmptyStarIcon"
+        static let fill = "FillStarIcon"
+    }
 }
