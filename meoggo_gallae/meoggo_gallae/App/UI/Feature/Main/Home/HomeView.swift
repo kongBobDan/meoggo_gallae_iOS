@@ -8,16 +8,20 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var goToSelect = false
+    @State private var goToScreen = false
+    
     var body: some View {
         ZStack {
             Color.b[200].ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 45) {
                     DonutChart()
-                        .padding(.top, -(UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0) ?? 0)
+                        .padding(.top, -(UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0))
+                        .edgesIgnoringSafeArea(.top)
                     VStack(spacing: 10) {
-                        ConfrontationButton()
-                        CameraButton()
+                        ConfrontationButton(action: { goToSelect = true })
+                        CameraButton(action: { goToScreen = true })
                     }
                     VStack(alignment: .leading) {
                         HStack {
@@ -32,6 +36,12 @@ struct HomeView: View {
                         Menu(type: .dinner, content: "발아현미밥, 잡채, 배추김치, 해물순두부찌개, 연탄대패불고기, 청포도")
                     }
                 }
+            }
+            NavigationLink(destination: FoodSelectOnboardingView(), isActive: $goToSelect) {
+                EmptyView()
+            }
+            NavigationLink(destination: FoodScreenView(), isActive: $goToScreen) {
+                EmptyView()
             }
         }
         .navigationBarBackButtonHidden()

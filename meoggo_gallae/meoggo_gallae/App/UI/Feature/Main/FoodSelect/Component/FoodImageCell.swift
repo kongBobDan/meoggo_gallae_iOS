@@ -10,7 +10,9 @@ import SwiftUI
 import SwiftUI
 
 struct FoodImageCell: View {
-    var image: String
+    let image: String
+    let width: CGFloat
+    let height: CGFloat
 
     var body: some View {
         GeometryReader { geometry in
@@ -20,13 +22,13 @@ struct FoodImageCell: View {
                 Image(image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 333)
-                    .frame(height: max(geometry.size.height, 220))
+                    .frame(width: width)
+                    .frame(height: max(geometry.size.height, height))
                     .clipped()
-                    .frame(width: 333, height: 220)
+                    .frame(width: width, height: height)
             }
         }
-        .frame(width: 333, height: 220)
+        .frame(width: width, height: height)
     }
 }
 

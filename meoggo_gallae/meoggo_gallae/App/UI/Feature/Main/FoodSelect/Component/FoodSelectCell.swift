@@ -13,7 +13,7 @@ struct FoodSelectCell: View {
     
     var body: some View {
         VStack {
-            FoodImageCell(image: image)
+            FoodImageCell(image: image, width: 333, height: 220)
             Text(name)
                 .textStyle(TextStyle.foodname)
         }

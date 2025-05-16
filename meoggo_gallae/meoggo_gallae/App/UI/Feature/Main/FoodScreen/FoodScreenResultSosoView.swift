@@ -9,6 +9,8 @@ import SwiftUI
 
 struct FoodScreenResultSosoView: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var isRatingPresented = false
+
     
     var body: some View {
         ZStack {
@@ -26,12 +28,29 @@ struct FoodScreenResultSosoView: View {
                     .offset(x: -90)
                 Spacer()
             }
+            VStack(spacing: 35) {
+                Spacer()
+                Rectangle()
+                    .foregroundColor(.g[300])
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 10)
+                SmallRatingView(action: {
+                    isRatingPresented = true
+                })
+                .frame(height: 50)
+            }
             .toolbar {
                 MGToolbarBackButton {
                     dismiss()
                 }
             }
             .navigationBarBackButtonHidden()
+            .sheet(isPresented: $isRatingPresented) {
+                RatingView()
+                    .presentationDetents([.height(245)])
+                    .presentationDragIndicator(.visible)
+            }
+
         }
     }
 }
