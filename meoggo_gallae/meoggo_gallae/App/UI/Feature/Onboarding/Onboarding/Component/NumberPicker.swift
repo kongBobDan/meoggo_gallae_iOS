@@ -10,18 +10,12 @@ import SwiftUI
 struct NumberPicker: View {
     let range: ClosedRange<Int>
     let title: String
-    @State private var selectedNumber: Int
-    
-    init(range: ClosedRange<Int>, title: String) {
-        self.range = range
-        self.title = title
-        _selectedNumber = State(initialValue: range.lowerBound)
-    }
-    
+    @Binding var selection: Int
+
     var body: some View {
         VStack {
             HStack(spacing: 0) {
-                Picker("Choose a number", selection: $selectedNumber) {
+                Picker("Choose a number", selection: $selection) {
                     ForEach(range, id: \.self) { number in
                         Text("\(number)")
                             .textStyle(TextStyle.largebodycopy.bold)
@@ -29,7 +23,7 @@ struct NumberPicker: View {
                 }
                 .frame(width: 60, height: 150)
                 .pickerStyle(.wheel)
-                
+
                 Text(title)
                     .textStyle(TextStyle.largebodycopy.default)
             }

@@ -21,11 +21,11 @@ struct FoodScreenView: View {
                 Text("급식 먹은 날짜를 작성해주세요!")
                     .textStyle(TextStyle.largebodycopy.bold)
                 HStack {
-                    NumberPicker(range: 25...27, title: "년")
+//                    NumberPicker(range: 25...27, title: "년")
                     Spacer()
-                    NumberPicker(range: 1...12, title: "월")
+//                    NumberPicker(range: 1...12, title: "월")
                     Spacer()
-                    NumberPicker(range: 1...31, title: "일")
+//                    NumberPicker(range: 1...31, title: "일")
                 }
                 .frame(width: 290)
                 Spacer ()
