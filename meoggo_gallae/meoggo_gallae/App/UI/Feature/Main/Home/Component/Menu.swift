@@ -30,8 +30,10 @@ struct Menu: View {
                 Text(content)
                     .textStyle(TextStyle.caption1.bold)
                     .foregroundColor(.g[600])
+                Spacer()
             }
             .frame(width: 256, alignment: .leading)
+            .padding(.top)
         }
         .frame(width: 328, height: 94)
         .background(Color.b[300])
@@ -41,4 +43,8 @@ struct Menu: View {
     private var style: MenuStyle {
         MenuStyle(type: type)
     }
+}
+
+#Preview {
+    HomeView()
 }

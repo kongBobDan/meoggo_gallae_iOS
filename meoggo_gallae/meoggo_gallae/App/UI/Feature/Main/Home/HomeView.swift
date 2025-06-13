@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var goToSelect = false
     @State private var goToScreen = false
+    @State private var meal: Meal? = nil
     
     var body: some View {
         ZStack {
@@ -19,29 +20,45 @@ struct HomeView: View {
                     DonutChart()
                         .padding(.top, -(UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0))
                         .edgesIgnoringSafeArea(.top)
+
                     VStack(spacing: 10) {
                         ConfrontationButton(action: { goToSelect = true })
                         CameraButton(action: { goToScreen = true })
                     }
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Image(Asset.Home.calendar)
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                            Text("오늘 급식")
-                                .textStyle(TextStyle.title2.bold)
+
+                    if let meal = meal {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Image(Asset.Home.calendar)
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
+                                Text("오늘 급식")
+                                    .textStyle(TextStyle.title2.bold)
+                            }
+
+                            Menu(type: .morning, content: meal.breakfast.joined(separator: ", "))
+                            Menu(type: .lunch, content: meal.lunch.joined(separator: ", "))
+                            Menu(type: .dinner, content: meal.dinner.joined(separator: ", "))
                         }
-                        Menu(type: .morning, content: "발아현미밥, 잡채, 배추김치, 해물순두부찌개, 연탄대패불고기, 청포도")
-                        Menu(type: .lunch, content: "발아현미밥, 잡채, 배추김치, 해물순두부찌개, 연탄대패불고기, 청포도")
-                        Menu(type: .dinner, content: "발아현미밥, 잡채, 배추김치, 해물순두부찌개, 연탄대패불고기, 청포도")
                     }
                 }
             }
+
             NavigationLink(destination: FoodSelectOnboardingView(), isActive: $goToSelect) {
                 EmptyView()
             }
             NavigationLink(destination: FoodScreenView(), isActive: $goToScreen) {
                 EmptyView()
+            }
+        }
+        .onAppear {
+            MealApi.fetchTodayMeal { result in
+                switch result {
+                case .success(let fetchedMeal):
+                    meal = fetchedMeal
+                case .failure(let error):
+                    print("급식 불러오기 실패: \(error.localizedDescription)")
+                }
             }
         }
         .navigationBarBackButtonHidden()
