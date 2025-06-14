@@ -12,12 +12,14 @@ struct HomeView: View {
     @State private var goToScreen = false
     @State private var meal: Meal? = nil
     
+    @State private var wasteData: [WasteData] = []
+    
     var body: some View {
         ZStack {
             Color.b[200].ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 45) {
-                    DonutChart()
+                    DonutChart(data: wasteData)
                         .padding(.top, -(UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0))
                         .edgesIgnoringSafeArea(.top)
 
@@ -61,6 +63,29 @@ struct HomeView: View {
                 }
             }
         }
+        .onAppear {
+            if let userId = loadUserId() {
+                UserApi().fetchWasteStats(userId: userId) { result in
+                    switch result {
+                    case .success(let stats):
+                        let weekdaysCount = 21.0
+                        
+                        let low = Double(stats.lowLeftover) / weekdaysCount * 100
+                        let medium = Double(stats.mediumLeftover) / weekdaysCount * 100
+                        let high = Double(stats.highLeftover) / weekdaysCount * 100
+                        
+                        wasteData = [
+                            WasteData(category: "적게 남긴 날", percentage: low, color: .p[400]),
+                            WasteData(category: "적당히 먹은 날", percentage: medium, color: .b[600]),
+                            WasteData(category: "많이 남긴 날", percentage: high, color: .b[400])
+                        ]
+                    case .failure(let error):
+                        print("잔반 통계 불러오기 실패: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+
         .navigationBarBackButtonHidden()
     }
 }

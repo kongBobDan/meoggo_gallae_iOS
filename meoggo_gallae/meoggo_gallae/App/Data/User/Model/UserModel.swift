@@ -30,3 +30,15 @@ struct UserInfo: Decodable {
     let classNumber: Int
     let studentNumber: Int
 }
+
+struct WasteStatsResponse: Decodable {
+    let success: Bool
+    let stats: WasteStats
+}
+
+struct WasteStats: Decodable {
+    let total: Int
+    let lowLeftover: Int
+    let mediumLeftover: Int
+    let highLeftover: Int
+}

@@ -23,9 +23,47 @@ struct UserApi {
         )
         .validate()
         .publishDecodable(type: LoginResponse.self)
+        .handleEvents(receiveOutput: { response in
+            if let user = response.value?.user {
+                UserSession.shared.userId = user.id
+            }
+        })
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
     
+    func fetchWasteStats(userId: Int, completion: @escaping (Result<WasteStats, Error>) -> Void) {
+        let url = URL(string: MGURL.User.getUserLeftoverStats(id: userId))!
+
+        AF.request(url)
+            .validate()
+            .responseDecodable(of: WasteStatsResponse.self) { response in
+                switch response.result {
+                case .success(let data):
+                    completion(.success(data.stats))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+    }
 }
 
+final class UserSession {
+    static let shared = UserSession()
+    
+    private init() {}
+    
+    var userId: Int?
+}
+
+func saveUserId(_ id: Int) {
+    UserDefaults.standard.set(id, forKey: "userId")
+}
+
+func loadUserId() -> Int? {
+    UserDefaults.standard.integer(forKey: "userId").nonZeroOrNil
+}
+
+extension Int {
+    var nonZeroOrNil: Int? { self == 0 ? nil : self }
+}

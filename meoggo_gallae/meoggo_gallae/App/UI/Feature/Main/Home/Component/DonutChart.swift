@@ -16,11 +16,7 @@ struct WasteData: Identifiable {
 }
 
 struct DonutChart: View {
-    let data: [WasteData] = [
-        WasteData(category: "적게 남긴 날", percentage: 23, color: .p[400]),
-        WasteData(category: "적당히 먹은 날", percentage: 63, color: .b[600]),
-        WasteData(category: "많이 남긴 날", percentage: 33, color: .b[400])
-    ]
+    let data: [WasteData]
 
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
@@ -70,8 +66,4 @@ struct DonutChart: View {
         .background(Color.b[300])
         .clipShape(RoundedCorner(radius: 30, corners: [.bottomLeft, .bottomRight]))
     }
-}
-
-#Preview {
-    DonutChart()
 }
