@@ -9,26 +9,42 @@ import SwiftUI
 
 struct LankingCell: View {
     let rank: Int
-        let foodname: String
-        let image: String
-        let winning: Double
-        let rating: Double
+    let foodname: String
+    let imagePath: String
+    let winning: Int
+    let rating: Int
 
-        var sampleData: [BarChartData] {
-            [
-                .init(label: "승률", value: winning, color: .b[500]),
-                .init(label: "우승비율", value: rating, color: .b[500]),
-            ]
-        }
-    
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(String(rank)+"위 - "+foodname)
-                    .textStyle(TextStyle.title3.bold)
-                FoodImageCell(image: image, width: 208, height: 136)
+        HStack(spacing: 16) {
+            Text("\(rank)")
+                .textStyle(TextStyle.body.bold)
+                .frame(width: 30)
+
+            AsyncImage(url: URL(string: "http://0.0.0.0:3000/" + imagePath)) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+            } placeholder: {
+                Color.gray.opacity(0.3)
             }
-            BarChartCell(data: sampleData, maxValue: 150)
+            .frame(width: 40, height: 40)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading) {
+                Text(foodname)
+                    .textStyle(TextStyle.body.bold)
+                HStack {
+                    Text("승률 \(winning)%")
+                        .textStyle(TextStyle.caption1.default)
+                    Text("우승 \(rating)회")
+                        .textStyle(TextStyle.caption1.default)
+                        .foregroundColor(.g[700])
+                }
+            }
+
+            Spacer()
         }
+        .padding(.vertical, 8)
+        .padding(.horizontal)
     }
 }
