@@ -63,7 +63,7 @@ struct TournamentApi {
     }
 
     func calculateAvailableRounds(from count: Int) -> [String] {
-        let base = [4, 8, 16, 32, 64, 128, 132] // 132강은 보정용 추가 값
+        let base = [4, 8, 16, 32, 64, 128, 132]
         return base.filter { $0 <= count }.reversed().map { "\($0)강" }
     }
     
@@ -86,6 +86,37 @@ struct TournamentApi {
             }
         }.resume()
     }
+    
+    func fetchRoundFoods(round: Int, limit: Int, completion: @escaping (Result<[SelectFoodItem], Error>) -> Void) {
+        let url = URL(string: MGURL.Tournament.getTournamentRoundData)!
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let body: [String: Any] = ["round": round, "limit": limit]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            guard let data = data else {
+                completion(.failure(ApiError.emptyResponse))
+                return
+            }
+
+            do {
+                let decoded = try JSONDecoder().decode(RoundFoodResponse.self, from: data)
+                completion(.success(decoded.foods))
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
+    }
+
 }
 
 enum ApiError: Error {

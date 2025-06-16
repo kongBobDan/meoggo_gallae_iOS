@@ -8,14 +8,35 @@
 import SwiftUI
 
 struct FoodSelectCell: View {
-    let image: String
+    let imagePath: String
     let name: String
-    
+
     var body: some View {
         VStack {
-            FoodImageCell(image: image, width: 333, height: 220)
+            AsyncImage(url: URL(string: "http://0.0.0.0:3000/" + imagePath)) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(width: 150, height: 150)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 150, height: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                case .failure:
+                    Image(systemName: "photo")
+                        .resizable()
+                        .frame(width: 150, height: 150)
+                        .foregroundColor(.gray)
+                @unknown default:
+                    EmptyView()
+                }
+            }
+
             Text(name)
-                .textStyle(TextStyle.foodname)
+                .font(.headline)
+                .padding(.top, 8)
         }
     }
 }

@@ -53,3 +53,14 @@ struct FoodItem: Decodable {
     let matches: Int
 }
 
+struct SelectFoodItem: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let imagePath: String
+}
+
+struct RoundFoodResponse: Codable {
+    let success: Bool
+    let round: Int
+    let foods: [SelectFoodItem]
+}
