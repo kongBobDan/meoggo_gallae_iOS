@@ -38,3 +38,18 @@ struct FoodRankingStat: Identifiable, Decodable {
     let rank: Int
     let championshipRate: Double
 }
+
+struct FoodListResponse: Decodable {
+    let success: Bool
+    let foods: [FoodItem]
+}
+
+struct FoodItem: Decodable {
+    let id: Int
+    let name: String
+    let imagePath: String
+    let totalVotes: Int
+    let wins: Int
+    let matches: Int
+}
+

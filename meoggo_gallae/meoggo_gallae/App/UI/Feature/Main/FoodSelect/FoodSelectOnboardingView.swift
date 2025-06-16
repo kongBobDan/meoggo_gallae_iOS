@@ -10,6 +10,7 @@ import SwiftUI
 struct FoodSelectOnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var round: String = ""
+    @State private var roundOptions: [String] = []
     
     var body: some View {
         ZStack {
@@ -27,8 +28,8 @@ struct FoodSelectOnboardingView: View {
             VStack(spacing: 30) {
                 Spacer()
                 ScrollView {
-                    MGDropDown (
-                        options: [ "132강", "128강", "64강", "32강", "16강", "8강", "4강"],
+                    MGDropDown(
+                        options: roundOptions,
                         selection: $round
                     )
                 }
@@ -67,6 +68,11 @@ struct FoodSelectOnboardingView: View {
             }
         }
         .navigationBarBackButtonHidden()
+        .onAppear {
+            TournamentApi.shared.fetchFoodCountAndUpdateRounds { rounds in
+                self.roundOptions = rounds
+            }
+        }
     }
 }
 
