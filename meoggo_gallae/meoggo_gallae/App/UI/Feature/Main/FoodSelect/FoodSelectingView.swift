@@ -7,48 +7,47 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct FoodSelectingView: View {
-    @State private var showPopup = false
-    @State private var navigateToOnboarding = false
+    @State private var currentRound = 16
     @State private var foods: [SelectFoodItem] = []
     @State private var isLoading = true
+    @State private var showPopup = false
+    @State private var navigateToOnboarding = false
 
-    private let round = 16
-    private let limit = 2
+    private let userId = 1
 
     var body: some View {
         ZStack {
             Color.b[200].ignoresSafeArea()
 
             if isLoading {
-                ProgressView("음식을 불러오는 중...")
+                ProgressView("로딩 중...")
             } else {
                 VStack(spacing: 15) {
-                    ForEach(foods) { food in
-                        FoodSelectCell(
-                            imagePath: food.imagePath,
-                            name: food.name
-                        )
+                    ForEach(foods, id: \.id) { food in
+                        Button {
+                            onFoodSelected(winner: food, loser: otherFood(of: food))
+                        } label: {
+                            FoodSelectCell(
+                                image: food.imagePath,
+                                name: food.name
+                            )
+                        }
                     }
-
-                    Image(Asset.FoodSelect.text)
-                        .resizable()
-                        .frame(width: 69, height: 45)
                 }
-                .padding(.bottom)
 
                 VStack {
                     Spacer().frame(height: 650)
-
                     HStack(spacing: -30) {
                         Image(Asset.FoodSelect.ing)
                             .resizable()
                             .frame(width: 163.25, height: 230)
                             .offset(x: 10, y: 70)
-
                         VStack {
                             BubbleCell(
-                                text: "난 \(foods.first?.name ?? "이 음식")가 좋던데...",
+                                text: "난 \(foods.first?.name ?? "{음식}")가 좋던데...",
                                 type: .select
                             )
                             BubbleCell(
@@ -75,12 +74,11 @@ struct FoodSelectingView: View {
                 )
             }
         }
-        .onAppear(perform: fetchFoods)
         .toolbar {
-            MGToolbarBackButton(
+            MGToolbarBackButton (
                 action: { showPopup = true },
                 foodselect: true,
-                round: round,
+                round: currentRound,
                 now: 6
             )
         }
@@ -88,20 +86,54 @@ struct FoodSelectingView: View {
         .navigationDestination(isPresented: $navigateToOnboarding) {
             FoodSelectOnboardingView()
         }
+        .onAppear {
+            loadFoods()
+        }
     }
 
-    private func fetchFoods() {
+    private func loadFoods() {
         isLoading = true
-        TournamentApi.shared.fetchRoundFoods(round: round, limit: limit) { result in
+        TournamentApi.shared.fetchFoods(round: currentRound) { result in
             DispatchQueue.main.async {
                 isLoading = false
                 switch result {
-                case .success(let fetchedFoods):
-                    foods = fetchedFoods
+                case .success(let response):
+                    self.currentRound = response.round
+                    self.foods = response.foods
                 case .failure(let error):
-                    print("Fetch error: \(error)")
+                    print("Fetch 실패: \(error.localizedDescription)")
                 }
             }
         }
+    }
+
+    private func onFoodSelected(winner: SelectFoodItem, loser: SelectFoodItem) {
+        guard let url = URL(string: "http://0.0.0.0:3000/tournament/vote") else { return }
+
+        let voteData = [
+            "userId": userId,
+            "winnerId": winner.id,
+            "loserId": loser.id,
+            "round": currentRound
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = try? JSONSerialization.data(withJSONObject: voteData)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { _, _, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("투표 실패: \(error)")
+                } else {
+                    loadFoods()
+                }
+            }
+        }.resume()
+    }
+
+    private func otherFood(of selected: SelectFoodItem) -> SelectFoodItem {
+        return foods.first(where: { $0.id != selected.id }) ?? selected
     }
 }

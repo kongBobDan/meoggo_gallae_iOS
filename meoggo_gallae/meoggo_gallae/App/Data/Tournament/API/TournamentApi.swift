@@ -117,6 +117,42 @@ struct TournamentApi {
         }.resume()
     }
 
+    func fetchFoods(round: Int, limit: Int = 2, completion: @escaping (Result<RoundFoodResponse, Error>) -> Void) {
+            guard let url = URL(string: MGURL.Tournament.postTournamentVote) else {
+                completion(.failure(NSError(domain: "Invalid URL", code: 0)))
+                return
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+
+            let body: [String: Any] = [
+                "round": round,
+                "limit": limit
+            ]
+
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            URLSession.shared.dataTask(with: request) { data, _, error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+
+                guard let data = data else {
+                    completion(.failure(NSError(domain: "No data", code: 0)))
+                    return
+                }
+
+                do {
+                    let decoded = try JSONDecoder().decode(RoundFoodResponse.self, from: data)
+                    completion(.success(decoded))
+                } catch {
+                    completion(.failure(error))
+                }
+            }.resume()
+        }
 }
 
 enum ApiError: Error {
