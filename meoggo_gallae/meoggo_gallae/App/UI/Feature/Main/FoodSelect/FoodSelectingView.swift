@@ -7,16 +7,20 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct FoodSelectingView: View {
-    @State private var currentRound = 16
+    let initialRound: Int
+    @State private var currentRound: Int
     @State private var foods: [SelectFoodItem] = []
     @State private var isLoading = true
     @State private var showPopup = false
     @State private var navigateToOnboarding = false
 
     private let userId = 1
+
+    init(initialRound: Int) {
+        self.initialRound = initialRound
+        _currentRound = State(initialValue: initialRound)
+    }
 
     var body: some View {
         ZStack {
@@ -93,44 +97,29 @@ struct FoodSelectingView: View {
 
     private func loadFoods() {
         isLoading = true
-        TournamentApi.shared.fetchFoods(round: currentRound) { result in
+        TournamentApi.shared.fetchRoundFoods(round: currentRound, limit: 2) { result in
             DispatchQueue.main.async {
-                isLoading = false
                 switch result {
                 case .success(let response):
-                    self.currentRound = response.round
                     self.foods = response.foods
+                    self.currentRound = response.round  // 만약 라운드 업데이트도 필요하면 이렇게
+                    self.isLoading = false
                 case .failure(let error):
                     print("Fetch 실패: \(error.localizedDescription)")
+                    self.isLoading = false
                 }
             }
         }
     }
-
+    
     private func onFoodSelected(winner: SelectFoodItem, loser: SelectFoodItem) {
-        guard let url = URL(string: "http://0.0.0.0:3000/tournament/vote") else { return }
-
-        let voteData = [
-            "userId": userId,
-            "winnerId": winner.id,
-            "loserId": loser.id,
-            "round": currentRound
-        ]
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.httpBody = try? JSONSerialization.data(withJSONObject: voteData)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { _, _, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("투표 실패: \(error)")
-                } else {
-                    loadFoods()
-                }
+        TournamentApi.shared.voteFood(userId: userId, winnerId: winner.id, loserId: loser.id, round: currentRound) { error in
+            if let error = error {
+                print("투표 실패: \(error)")
+            } else {
+                loadFoods()
             }
-        }.resume()
+        }
     }
 
     private func otherFood(of selected: SelectFoodItem) -> SelectFoodItem {

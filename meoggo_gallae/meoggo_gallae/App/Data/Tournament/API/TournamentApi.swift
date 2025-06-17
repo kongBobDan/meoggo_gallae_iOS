@@ -11,6 +11,7 @@ struct TournamentApi {
     static let shared = TournamentApi()
     private init() {}
     
+    // 메뉴 순위 (리더보드) 조회 API
     func fetchLeaderboard(completion: @escaping (Result<[LeaderboardItem], Error>) -> Void) {
         let url = URL(string: MGURL.Tournament.getleaderboard)!
         
@@ -36,6 +37,7 @@ struct TournamentApi {
         }.resume()
     }
     
+    // 특정 음식의 랭킹 통계 정보 조회 API (food id 고정: 1)
     func fetchMyFoodRanking(completion: @escaping (Result<FoodRankingStat, Error>) -> Void) {
         let url = URL(string: MGURL.Tournament.getStatisticsByFood(id: 1))!
 
@@ -62,11 +64,13 @@ struct TournamentApi {
         }.resume()
     }
 
+    // 전체 음식 리스트 개수를 기반으로 가능한 토너먼트 라운드(강) 계산 함수 (API 호출 아님, 로컬 계산)
     func calculateAvailableRounds(from count: Int) -> [String] {
         let base = [4, 8, 16, 32, 64, 128, 132]
         return base.filter { $0 <= count }.reversed().map { "\($0)강" }
     }
     
+    // 모든 음식 목록 조회
     func fetchFoodCountAndUpdateRounds(completion: @escaping ([String]) -> Void) {
         let url = URL(string: MGURL.Tournament.getAllFoodList)!
 
@@ -87,69 +91,97 @@ struct TournamentApi {
         }.resume()
     }
     
-    func fetchRoundFoods(round: Int, limit: Int, completion: @escaping (Result<[SelectFoodItem], Error>) -> Void) {
-        let url = URL(string: MGURL.Tournament.getTournamentRoundData)!
+//    // 특정 라운드, 제한 개수에 해당하는 음식 리스트 조회 API (GET + JSON body - 다소 비표준)
+//    func fetchRoundFoods(round: Int, limit: Int, completion: @escaping (Result<[SelectFoodItem], Error>) -> Void) {
+//        let url = URL(string: MGURL.Tournament.getTournamentRoundData)!
+//
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "GET"
+//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//
+//        let body: [String: Any] = ["round": round, "limit": limit]
+//        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+//
+//        URLSession.shared.dataTask(with: request) { data, response, error in
+//            if let error = error {
+//                completion(.failure(error))
+//                return
+//            }
+//
+//            guard let data = data else {
+//                completion(.failure(ApiError.emptyResponse))
+//                return
+//            }
+//
+//            do {
+//                let decoded = try JSONDecoder().decode(RoundFoodResponse.self, from: data)
+//                completion(.success(decoded.foods))
+//            } catch {
+//                completion(.failure(error))
+//            }
+//        }.resume()
+//    }
 
-        var request = URLRequest(url: url)
+    // 토너먼트 라운드 데이터 조회
+    func fetchRoundFoods(round: Int, limit: Int = 2, completion: @escaping (Result<RoundFoodResponse, Error>) -> Void) {
+        print("[fetchRoundFoods] ⚠️ 비표준 GET+body 요청 시도")
+
+        var components = URLComponents(string: MGURL.Tournament.getTournamentRoundData)!
+        var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let body: [String: Any] = ["round": round, "limit": limit]
+        // 시도는 하지만 대부분 실패할 가능성 있음
+        let body = ["round": round, "limit": limit]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
+                print("[fetchRoundFoods] ❌ Request error:", error)
                 completion(.failure(error))
                 return
             }
 
             guard let data = data else {
-                completion(.failure(ApiError.emptyResponse))
+                print("[fetchRoundFoods] ❌ No data")
+                completion(.failure(NSError(domain: "No data", code: 0)))
                 return
             }
 
             do {
                 let decoded = try JSONDecoder().decode(RoundFoodResponse.self, from: data)
-                completion(.success(decoded.foods))
+                print("[fetchRoundFoods] ✅ Success")
+                completion(.success(decoded))
             } catch {
+                print("[fetchRoundFoods] ❌ Decode error:", error)
                 completion(.failure(error))
             }
         }.resume()
     }
 
-    func fetchFoods(round: Int, limit: Int = 2, completion: @escaping (Result<RoundFoodResponse, Error>) -> Void) {
+    
+    // 토너먼트 투표
+    func voteFood(userId: Int, winnerId: Int, loserId: Int, round: Int, completion: ((Error?) -> Void)? = nil) {
             guard let url = URL(string: MGURL.Tournament.postTournamentVote) else {
-                completion(.failure(NSError(domain: "Invalid URL", code: 0)))
+                completion?(ApiError.invalidURL)
                 return
             }
-
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-
-            let body: [String: Any] = [
-                "round": round,
-                "limit": limit
+            
+            let voteData: [String: Any] = [
+                "userId": userId,
+                "winnerId": winnerId,
+                "loserId": loserId,
+                "round": round
             ]
-
-            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.httpBody = try? JSONSerialization.data(withJSONObject: voteData)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-            URLSession.shared.dataTask(with: request) { data, _, error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-
-                guard let data = data else {
-                    completion(.failure(NSError(domain: "No data", code: 0)))
-                    return
-                }
-
-                do {
-                    let decoded = try JSONDecoder().decode(RoundFoodResponse.self, from: data)
-                    completion(.success(decoded))
-                } catch {
-                    completion(.failure(error))
+            
+            URLSession.shared.dataTask(with: request) { _, _, error in
+                DispatchQueue.main.async {
+                    completion?(error)
                 }
             }.resume()
         }

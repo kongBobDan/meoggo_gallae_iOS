@@ -118,15 +118,6 @@ struct LankingView: View {
                     }
                 }
                 .onAppear {
-                    TournamentApi.shared.fetchLeaderboard { result in
-                        switch result {
-                        case .success(let data):
-                            self.leaderboardData = data
-                        case .failure(let error):
-                            print("Failed to fetch leaderboard:", error)
-                        }
-                    }
-
                     TournamentApi.shared.fetchMyFoodRanking { result in
                         switch result {
                         case .success(let stat):
