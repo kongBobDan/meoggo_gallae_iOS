@@ -32,7 +32,7 @@ struct LankingView: View {
                             .textStyle(TextStyle.foodname)
                             .padding(.top, 1)
                         
-                        AsyncImage(url: URL(string: MGURL.url + winner.imagePath)) { image in
+                        AsyncImage(url: URL(string: MGURL.url + "/" + winner.imagePath)) { image in
                             image
                                 .resizable()
                                 .scaledToFill()
@@ -40,6 +40,7 @@ struct LankingView: View {
                             Color.gray.opacity(0.3)
                         }
                         .frame(width: 333, height: 230)
+                        .clipped()
                         
                         if let stat = myFoodStat {
                             let winRate = stat.winRate

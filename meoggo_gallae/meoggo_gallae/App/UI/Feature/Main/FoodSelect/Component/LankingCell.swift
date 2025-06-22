@@ -15,12 +15,15 @@ struct LankingCell: View {
     let rating: Int
 
     var body: some View {
-        HStack(spacing: 16) {
+        let fullURL = MGURL.url + "/" + imagePath
+        print("🔥 이미지 경로: \(fullURL)")  // ✅ 여긴 가능
+
+        return HStack(spacing: 16) {
             Text("\(rank)")
                 .textStyle(TextStyle.body.bold)
                 .frame(width: 30)
 
-            AsyncImage(url: URL(string: imagePath)) { image in
+            AsyncImage(url: URL(string: fullURL)) { image in
                 image
                     .resizable()
                     .scaledToFill()
@@ -28,7 +31,7 @@ struct LankingCell: View {
                 Color.gray.opacity(0.3)
             }
             .frame(width: 40, height: 40)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipped()
 
             VStack(alignment: .leading) {
                 Text(foodname)
