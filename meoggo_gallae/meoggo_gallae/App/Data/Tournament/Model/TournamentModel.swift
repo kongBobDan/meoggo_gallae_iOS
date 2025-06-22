@@ -7,19 +7,23 @@
 
 import SwiftUI
 
-struct LeaderboardResponse: Codable {
+struct LeaderboardResponse: Decodable {
     let success: Bool
     let leaderboard: [LeaderboardItem]
 }
 
-struct LeaderboardItem: Codable, Identifiable {
+struct LeaderboardItem: Identifiable, Decodable {
     let id: Int
     let name: String
     let imagePath: String
     let totalVotes: Int
     let wins: Int
     let matches: Int
-    let winRate: Int
+    let winRate: Double
+
+    var roundedWinRate: Int {
+        Int(round(winRate))
+    }
 }
 
 struct FoodRankingStatResponse: Decodable {
@@ -60,7 +64,7 @@ struct SelectFoodItem: Codable, Identifiable {
 }
 
 struct RoundFoodResponse: Codable {
-    let success: Bool
+    let success: Bool?
     let round: Int
     let foods: [SelectFoodItem]
 }

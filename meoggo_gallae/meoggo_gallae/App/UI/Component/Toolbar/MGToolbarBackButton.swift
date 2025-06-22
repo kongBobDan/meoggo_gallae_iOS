@@ -12,6 +12,7 @@ struct MGToolbarBackButton: ToolbarContent {
     var foodselect: Bool?
     var round: Int?
     var now: Int?
+    var allRound: Int?
 
     var body: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
@@ -23,18 +24,41 @@ struct MGToolbarBackButton: ToolbarContent {
 
                     if foodselect == true {
                         HStack(spacing: 245) {
-                            Text("\(round ?? 0)강")
+                            Text(roundText(for: round))
                                 .textStyle(.title3.bold)
-                            if let round = round, let now = now {
-                                Text("\(round)/\(now)")
+                                .foregroundColor(.black)
+
+                            if let now = now, let allRound = allRound {
+                                Text("\(now)/\(allRound)")
                                     .textStyle(.callout.default)
                                     .foregroundColor(.g[900])
                             }
                         }
                     }
-                    
                 }
             }
+        }
+    }
+
+    private func roundText(for round: Int?) -> String {
+        guard let round = round else { return "" }
+        switch round {
+        case 2:
+            return "결승"
+        case 4:
+            return "4강"
+        case 8:
+            return "8강"
+        case 16:
+            return "16강"
+        case 32:
+            return "32강"
+        case 64:
+            return "64강"
+        case 128:
+            return "128강"
+        default:
+            return "\(round)강"
         }
     }
 }

@@ -5,7 +5,7 @@
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<true/>
+		<string>YES</string>
 	</dict>
 	<key>UIAppFonts</key>
 	<array>

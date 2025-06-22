@@ -11,7 +11,7 @@ struct LankingCell: View {
     let rank: Int
     let foodname: String
     let imagePath: String
-    let winning: Int
+    let winning: Double
     let rating: Int
 
     var body: some View {
@@ -20,7 +20,7 @@ struct LankingCell: View {
                 .textStyle(TextStyle.body.bold)
                 .frame(width: 30)
 
-            AsyncImage(url: URL(string: "http://0.0.0.0:3000/" + imagePath)) { image in
+            AsyncImage(url: URL(string: imagePath)) { image in
                 image
                     .resizable()
                     .scaledToFill()
@@ -34,7 +34,7 @@ struct LankingCell: View {
                 Text(foodname)
                     .textStyle(TextStyle.body.bold)
                 HStack {
-                    Text("승률 \(winning)%")
+                    Text("승률 \(Int(round(winning)))%")
                         .textStyle(TextStyle.caption1.default)
                     Text("우승 \(rating)회")
                         .textStyle(TextStyle.caption1.default)

@@ -8,16 +8,12 @@
 import SwiftUI
 
 struct LankingView: View {
-    @Environment(\.dismiss) private var dismiss
-    let sampleData: [BarChartData] = [
-        .init(label: "승률", value: 99, color: .p[400]),
-        .init(label: "우승비율", value: 23, color: .p[400]),
-    ]
-    
+    @State private var goHome = false
+    let winnerFood: SelectFoodItem?
+
     @State private var leaderboardData: [LeaderboardItem] = []
     @State private var myFoodStat: FoodRankingStat?
 
-    
     var body: some View {
         ZStack {
             Color.b[200].ignoresSafeArea()
@@ -30,12 +26,13 @@ struct LankingView: View {
                     }
                     .padding(.top, 40)
                     .textStyle(TextStyle.title1.bold)
-                    if let stat = myFoodStat {
-                        Text("\"\(stat.name)\"")
+                    
+                    if let winner = winnerFood {
+                        Text("\"\(winner.name)\"")
                             .textStyle(TextStyle.foodname)
                             .padding(.top, 1)
                         
-                        AsyncImage(url: URL(string: "http://0.0.0.0:3000/" + stat.imagePath)) { image in
+                        AsyncImage(url: URL(string: MGURL.url + winner.imagePath)) { image in
                             image
                                 .resizable()
                                 .scaledToFill()
@@ -43,39 +40,37 @@ struct LankingView: View {
                             Color.gray.opacity(0.3)
                         }
                         .frame(width: 333, height: 230)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                        let winRate = stat.winRate
-                        let victoryRatio = stat.championshipRate
-
-                        HStack(spacing: 5) {
-                            Text("급식 메뉴들 중에서")
-                                .textStyle(TextStyle.body.default)
-                            Text("\(Int(winRate))%")
-                                .textStyle(TextStyle.body.bold)
-                                .foregroundColor(.p[500])
-                            Text("정도의 승률과")
-                                .textStyle(TextStyle.body.default)
+                        
+                        if let stat = myFoodStat {
+                            let winRate = stat.winRate
+                            let victoryRatio = stat.championshipRate
+                            
+                            HStack(spacing: 5) {
+                                Text("급식 메뉴들 중에서")
+                                    .textStyle(TextStyle.body.default)
+                                Text("\(Int(winRate))%")
+                                    .textStyle(TextStyle.body.bold)
+                                    .foregroundColor(.p[500])
+                                Text("정도의 승률과")
+                                    .textStyle(TextStyle.body.default)
+                            }
+                            HStack(spacing: 0) {
+                                Text("\(Int(victoryRatio))%")
+                                    .textStyle(TextStyle.body.bold)
+                                    .foregroundColor(.p[500])
+                                Text("의 우승비율을 가지고 있어요.")
+                                    .textStyle(TextStyle.body.default)
+                            }
+                            
+                            let sampleData = [
+                                BarChartData(label: "승률", value: winRate, color: .p[400]),
+                                BarChartData(label: "우승비율", value: victoryRatio, color: .p[400])
+                            ]
+                            BarChartCell(data: sampleData, maxValue: 100)
+                                .padding(.top, 20)
                         }
-                        HStack(spacing: 0) {
-                            Text("\(Int(victoryRatio))%")
-                                .textStyle(TextStyle.body.bold)
-                                .foregroundColor(.p[500])
-                            Text("의 우승비율을 가지고 있어요.")
-                                .textStyle(TextStyle.body.default)
-                        }
-
-                        let sampleData = [
-                            BarChartData(label: "승률", value: winRate, color: .p[400]),
-                            BarChartData(label: "우승비율", value: victoryRatio, color: .p[400])
-                        ]
-                        BarChartCell(data: sampleData, maxValue: 100)
-                            .padding(.top, 20)
                     }
-                    Rectangle()
-                        .frame(height: 5)
-                        .offset(y: -10)
-                        .foregroundColor(.p[400])
+                    
                     VStack(spacing: 0) {
                         HorizontalWave()
                             .fill(.white)
@@ -95,45 +90,58 @@ struct LankingView: View {
                                 )
                             }
                         }
+                        .padding(.leading, 25)
                         .frame(maxWidth: .infinity)
                         .padding(.bottom, 40)
                         .background(Color.white)
                     }
                     .padding(.top)
+                    
+                    NavigationLink(destination: HomeView(), isActive: $goHome) {
+                        EmptyView()
+                    }
                 }
                 .toolbar {
                     MGToolbarBackButton {
-                        dismiss()
+                        goHome = true
                     }
                 }
                 .navigationBarBackButtonHidden()
                 .onAppear {
-                    TournamentApi.shared.fetchLeaderboard { result in
-                        switch result {
-                        case .success(let data):
-                            self.leaderboardData = data
-                        case .failure(let error):
-                            print("Failed to fetch leaderboard:", error)
-                        }
+                    if let winner = winnerFood {
+                        fetchMyFoodStat(foodId: winner.id)
                     }
                 }
                 .onAppear {
-                    TournamentApi.shared.fetchMyFoodRanking { result in
-                        switch result {
-                        case .success(let stat):
-                            DispatchQueue.main.async {
-                                self.myFoodStat = stat
-                            }
-                        case .failure(let error):
-                            print("Failed to fetch my food stat:", error)
-                        }
-                    }
+                    fetchLeaderboard()
                 }
             }
         }
     }
-}
 
-#Preview {
-    LankingView()
+    private func fetchLeaderboard() {
+        TournamentApi.shared.fetchLeaderboard { result in
+            switch result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    self.leaderboardData = data
+                }
+            case .failure(let error):
+                print("Failed to fetch leaderboard:", error)
+            }
+        }
+    }
+
+    private func fetchMyFoodStat(foodId: Int) {
+        TournamentApi.shared.fetchMyFoodRanking(foodId: foodId) { result in
+            switch result {
+            case .success(let stat):
+                DispatchQueue.main.async {
+                    self.myFoodStat = stat
+                }
+            case .failure(let error):
+                print("Failed to fetch my food stat:", error)
+            }
+        }
+    }
 }

@@ -38,8 +38,8 @@ struct TournamentApi {
     }
     
     // 특정 음식의 랭킹 통계 정보 조회 API (food id 고정: 1)
-    func fetchMyFoodRanking(completion: @escaping (Result<FoodRankingStat, Error>) -> Void) {
-        let url = URL(string: MGURL.Tournament.getStatisticsByFood(id: 1))!
+    func fetchMyFoodRanking(foodId: Int, completion: @escaping (Result<FoodRankingStat, Error>) -> Void) {
+        let url = URL(string: MGURL.Tournament.getStatisticsByFood(id: foodId))!
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -124,16 +124,26 @@ struct TournamentApi {
 
     // 토너먼트 라운드 데이터 조회
     func fetchRoundFoods(round: Int, limit: Int = 2, completion: @escaping (Result<RoundFoodResponse, Error>) -> Void) {
-        print("[fetchRoundFoods] ⚠️ 비표준 GET+body 요청 시도")
+        print("[fetchRoundFoods] ⏳ 요청 준비중...")
 
+        // URL 구성 (쿼리 파라미터 포함)
         var components = URLComponents(string: MGURL.Tournament.getTournamentRoundData)!
-        var request = URLRequest(url: components.url!)
+        components.queryItems = [
+            URLQueryItem(name: "round", value: String(round)),
+            URLQueryItem(name: "limit", value: String(limit))
+        ]
+
+        guard let url = components.url else {
+            print("[fetchRoundFoods] ❌ URL 생성 실패")
+            completion(.failure(NSError(domain: "Invalid URL", code: 0)))
+            return
+        }
+
+        var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // 시도는 하지만 대부분 실패할 가능성 있음
-        let body = ["round": round, "limit": limit]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        print("[fetchRoundFoods] 📤 요청 URL:", url)
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
@@ -148,12 +158,17 @@ struct TournamentApi {
                 return
             }
 
+            // 디버깅용 응답 출력
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("[fetchRoundFoods] 📄 응답 데이터:\n\(jsonString)")
+            }
+
             do {
                 let decoded = try JSONDecoder().decode(RoundFoodResponse.self, from: data)
-                print("[fetchRoundFoods] ✅ Success")
+                print("[fetchRoundFoods] ✅ 성공적으로 파싱됨")
                 completion(.success(decoded))
             } catch {
-                print("[fetchRoundFoods] ❌ Decode error:", error)
+                print("[fetchRoundFoods] ❌ 디코딩 실패:", error)
                 completion(.failure(error))
             }
         }.resume()
