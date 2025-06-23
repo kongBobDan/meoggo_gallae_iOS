@@ -10,7 +10,7 @@ import PhotosUI
 
 struct FoodScreenView: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     @State private var grade: Int = 1
     @State private var classNumber: Int = 1
     @State private var studentNumber: Int = 1
@@ -23,12 +23,19 @@ struct FoodScreenView: View {
     // 사진 선택 관련
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
     @State private var selectedUIImage: UIImage? = nil
-    
+
+    // 버튼 누른 횟수 카운트
+    @AppStorage("foodScreenButtonTapCount") private var tapCount: Int = 0
+
+    // 네비게이션
+    @State private var navigateToGood = false
+    @State private var navigateToSoso = false
+    @State private var navigateToBad = false
+
     var body: some View {
         ZStack {
             Color.b[200].ignoresSafeArea()
             VStack(spacing: 30) {
-
                 // ✅ 이미지 선택 버튼
                 PhotosPicker(
                     selection: $selectedPhotoItem,
@@ -83,7 +90,17 @@ struct FoodScreenView: View {
                     size: .medium,
                     color: .dark,
                     action: {
-                        print("작성 완료: 20\(selectedYear)년 \(selectedMonth)월 \(selectedDay)일")
+                        tapCount += 1
+                        print("작성 완료 \(tapCount)회")
+
+                        switch tapCount % 3 {
+                        case 1:
+                            navigateToGood = true
+                        case 2:
+                            navigateToSoso = true
+                        default:
+                            navigateToBad = true
+                        }
                     }
                 )
                 .frame(width: 333)
@@ -94,10 +111,19 @@ struct FoodScreenView: View {
                 }
             }
             .navigationBarBackButtonHidden()
+            .navigationDestination(isPresented: $navigateToGood) {
+                FoodScreenResultGoodView()
+            }
+            .navigationDestination(isPresented: $navigateToSoso) {
+                FoodScreenResultSosoView()
+            }
+            .navigationDestination(isPresented: $navigateToBad) {
+                if let image = selectedUIImage {
+                    FoodScreenResultBadView(selectedImage: image)
+                } else {
+                    Text("이미지가 선택되지 않았습니다.")
+                }
+            }
         }
     }
-}
-
-#Preview {
-    FoodScreenView()
 }

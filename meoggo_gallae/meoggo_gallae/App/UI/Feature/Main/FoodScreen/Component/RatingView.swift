@@ -9,7 +9,8 @@ import SwiftUI
 
 struct RatingView: View {
     @State private var starnum: Int = 0
-    
+    var onRated: ((Int) -> Void)? = nil
+
     var body: some View {
         ZStack {
             Color.b[200]
@@ -20,6 +21,11 @@ struct RatingView: View {
                     .textStyle(TextStyle.body.default)
                 StarCell(rating: $starnum, spacing: 10, frame: 34)
                     .padding(.top, 25)
+                    .onChange(of: starnum) { newValue in
+                        if newValue > 0 {
+                            onRated?(newValue)
+                        }
+                    }
             }
             .frame(maxWidth: .infinity)
         }

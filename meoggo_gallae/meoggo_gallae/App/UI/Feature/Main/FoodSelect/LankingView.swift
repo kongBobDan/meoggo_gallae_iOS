@@ -95,6 +95,7 @@ struct LankingView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.bottom, 40)
                         .background(Color.white)
+                        .ignoresSafeArea()
                     }
                     .padding(.top)
                     

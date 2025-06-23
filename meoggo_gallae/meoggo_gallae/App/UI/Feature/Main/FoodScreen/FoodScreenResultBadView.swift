@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct FoodScreenResultBadView: View {
-    @Environment(\.dismiss) private var dismiss
+    let selectedImage: UIImage  // ✅ 전달받는 이미지
+
     @State private var isRatingPresented = false
-    
+    @State private var goToHome = false
+
     var body: some View {
         ZStack {
             Color.b[200].ignoresSafeArea()
@@ -20,6 +22,7 @@ struct FoodScreenResultBadView: View {
                     .frame(width: 355.45, height: 306)
                 ResultText(type: .bad)
             }
+
             VStack(spacing: 35) {
                 Spacer()
                 Rectangle()
@@ -30,22 +33,41 @@ struct FoodScreenResultBadView: View {
                     isRatingPresented = true
                 })
                 .frame(height: 50)
-            }
-            .toolbar {
-                MGToolbarBackButton {
-                    dismiss()
+
+                NavigationLink(destination: HomeView(), isActive: $goToHome) {
+                    EmptyView()
                 }
             }
-            .navigationBarBackButtonHidden()
-            .sheet(isPresented: $isRatingPresented) {
-                RatingView()
-                    .presentationDetents([.height(245)])
-                    .presentationDragIndicator(.visible)
+        }
+        .onAppear {
+            postLeftover()
+        }
+        .toolbar {
+            MGToolbarBackButton {
+                goToHome = true
+            }
+        }
+        .navigationBarBackButtonHidden()
+        .sheet(isPresented: $isRatingPresented) {
+            RatingView(onRated: { _ in
+                isRatingPresented = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    goToHome = true
+                }
+            })
+            .presentationDetents([.height(245)])
+            .presentationDragIndicator(.visible)
+        }
+    }
+
+    private func postLeftover() {
+        LeftoverAPI.postLeftoverRecord(image: selectedImage) { result in
+            switch result {
+            case .success(let response):
+                print("잔반 기록 성공:", response.record)
+            case .failure(let error):
+                print("잔반 기록 실패:", error.localizedDescription)
             }
         }
     }
-}
-
-#Preview {
-    FoodScreenResultBadView()
 }

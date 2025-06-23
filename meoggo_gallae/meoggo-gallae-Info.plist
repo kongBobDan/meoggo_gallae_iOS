@@ -5,15 +5,15 @@
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
-    <dict>
-        <key>192.0.0.2</key>
-        <dict>
-            <key>NSExceptionAllowsInsecureHTTPLoads</key>
-            <true/>
-            <key>NSIncludesSubdomains</key>
-            <true/>
-        </dict>
-    </dict>
+		<dict>
+			<key>10.80.162.226</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<string>YES</string>
 	</dict>

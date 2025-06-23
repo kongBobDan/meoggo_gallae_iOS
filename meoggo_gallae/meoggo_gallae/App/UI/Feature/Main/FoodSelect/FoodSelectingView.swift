@@ -68,7 +68,7 @@ struct FoodSelectingView: View {
                                 .offset(x: 10, y: 70)
                             VStack {
                                 BubbleCell(
-                                    text: "난 \(foods.randomElement()?.name ?? "{음식}")가 좋던데...",
+                                    text: "난 \(foods.randomElement()?.name ?? "{음식}")(이)가 좋던데...",
                                     type: .select
                                 )
                                 BubbleCell(

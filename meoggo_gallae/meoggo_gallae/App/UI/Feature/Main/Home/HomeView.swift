@@ -38,9 +38,9 @@ struct HomeView: View {
                                     .textStyle(TextStyle.title2.bold)
                             }
 
-                            Menu(type: .morning, content: meal.breakfast.joined(separator: ", "))
-                            Menu(type: .lunch, content: meal.lunch.joined(separator: ", "))
-                            Menu(type: .dinner, content: meal.dinner.joined(separator: ", "))
+                            Menu(type: .morning, content: meal.breakfast.map { $0.removeBracketText() }.joined(separator: ", "))
+                            Menu(type: .lunch, content: meal.lunch.map { $0.removeBracketText() }.joined(separator: ", "))
+                            Menu(type: .dinner, content: meal.dinner.map { $0.removeBracketText() }.joined(separator: ", "))
                         }
                     }
                 }
@@ -69,11 +69,11 @@ struct HomeView: View {
                     switch result {
                     case .success(let stats):
                         let weekdaysCount = 21.0
-                        
+
                         let low = Double(stats.lowLeftover) / weekdaysCount * 100
                         let medium = Double(stats.mediumLeftover) / weekdaysCount * 100
                         let high = Double(stats.highLeftover) / weekdaysCount * 100
-                        
+
                         wasteData = [
                             WasteData(category: "적게 남긴 날", percentage: low, color: .p[400]),
                             WasteData(category: "적당히 먹은 날", percentage: medium, color: .b[600]),
@@ -81,12 +81,31 @@ struct HomeView: View {
                         ]
                     case .failure(let error):
                         print("잔반 통계 불러오기 실패: \(error.localizedDescription)")
+                        // ✅ 실패 시 더미 데이터 사용
+                        wasteData = [
+                            WasteData(category: "적게 남긴 날", percentage: 60, color: .p[400]),
+                            WasteData(category: "적당히 먹은 날", percentage: 25, color: .b[600]),
+                            WasteData(category: "많이 남긴 날", percentage: 15, color: .b[400])
+                        ]
                     }
                 }
+            } else {
+                print("userId 없음 - 더미 데이터 사용")
+                wasteData = [
+                    WasteData(category: "적게 남긴 날", percentage: 60, color: .p[400]),
+                    WasteData(category: "적당히 먹은 날", percentage: 25, color: .b[600]),
+                    WasteData(category: "많이 남긴 날", percentage: 15, color: .b[400])
+                ]
             }
         }
 
         .navigationBarBackButtonHidden()
+    }
+}
+
+extension String {
+    func removeBracketText() -> String {
+        return self.replacingOccurrences(of: #" ?\([^\)]+\)"#, with: "", options: .regularExpression)
     }
 }
 
