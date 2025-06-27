@@ -8,7 +8,7 @@
 import Foundation
 
 struct MGURL {
-    static let url = "http://10.80.162.226:3000"
+    static let url = "http://10.80.163.236:3000"
     
     static let user = "\(url)/user"
     

@@ -90,37 +90,6 @@ struct TournamentApi {
             }
         }.resume()
     }
-    
-//    // 특정 라운드, 제한 개수에 해당하는 음식 리스트 조회 API (GET + JSON body - 다소 비표준)
-//    func fetchRoundFoods(round: Int, limit: Int, completion: @escaping (Result<[SelectFoodItem], Error>) -> Void) {
-//        let url = URL(string: MGURL.Tournament.getTournamentRoundData)!
-//
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "GET"
-//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//
-//        let body: [String: Any] = ["round": round, "limit": limit]
-//        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-//
-//        URLSession.shared.dataTask(with: request) { data, response, error in
-//            if let error = error {
-//                completion(.failure(error))
-//                return
-//            }
-//
-//            guard let data = data else {
-//                completion(.failure(ApiError.emptyResponse))
-//                return
-//            }
-//
-//            do {
-//                let decoded = try JSONDecoder().decode(RoundFoodResponse.self, from: data)
-//                completion(.success(decoded.foods))
-//            } catch {
-//                completion(.failure(error))
-//            }
-//        }.resume()
-//    }
 
     // 토너먼트 라운드 데이터 조회
     func fetchRoundFoods(round: Int, limit: Int = 2, completion: @escaping (Result<RoundFoodResponse, Error>) -> Void) {

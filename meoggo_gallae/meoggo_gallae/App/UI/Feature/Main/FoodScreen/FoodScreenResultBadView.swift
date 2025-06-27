@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FoodScreenResultBadView: View {
-    let selectedImage: UIImage  // ✅ 전달받는 이미지
+    let selectedImage: UIImage 
 
     @State private var isRatingPresented = false
     @State private var goToHome = false

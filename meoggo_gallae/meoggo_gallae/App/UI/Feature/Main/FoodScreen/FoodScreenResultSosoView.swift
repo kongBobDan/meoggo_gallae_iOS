@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct FoodScreenResultSosoView: View {
-//    @Environment(\.dismiss) private var dismiss
     @State private var isRatingPresented = false
     @State private var goToHome = false
     

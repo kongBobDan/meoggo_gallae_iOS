@@ -36,7 +36,6 @@ struct FoodScreenView: View {
         ZStack {
             Color.b[200].ignoresSafeArea()
             VStack(spacing: 30) {
-                // ✅ 이미지 선택 버튼
                 PhotosPicker(
                     selection: $selectedPhotoItem,
                     matching: .images,

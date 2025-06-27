@@ -33,7 +33,6 @@ struct FoodSelectingView: View {
             if isLoading {
                 ProgressView("로딩 중...")
             } else if foods.count == 2 {
-//                VStack(spacing: 10) {
                     VStack(spacing: 15) {
                         Button {
                             onFoodSelected(winner: foods[0], loser: foods[1])
@@ -81,8 +80,6 @@ struct FoodSelectingView: View {
                         }
                     }
                 }
-//            }
-
             if showPopup {
                 Color.black.opacity(0.4).ignoresSafeArea()
                 MGPopUp(
@@ -164,7 +161,6 @@ struct FoodSelectingView: View {
         let nextRound = currentRound / 2
         if nextRound >= 1, let nextFoods = allRounds[nextRound] {
             if nextRound == 1 && nextFoods.count == 1 {
-                // 1강(결승) 끝났을 때만 결과화면으로 이동
                 winnerFood = nextFoods.first
                 navigateToResult = true
             } else {
@@ -173,7 +169,7 @@ struct FoodSelectingView: View {
                 loadCurrentMatch()
             }
         } else {
-            winnerFood = foods.first  // 안전장치: 현재 선택된 음식 중 하나
+            winnerFood = foods.first
             navigateToResult = true
         }
     }

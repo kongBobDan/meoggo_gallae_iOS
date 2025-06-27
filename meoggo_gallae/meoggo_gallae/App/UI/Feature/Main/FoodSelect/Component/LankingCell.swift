@@ -16,7 +16,7 @@ struct LankingCell: View {
 
     var body: some View {
         let fullURL = MGURL.url + "/" + imagePath
-        print("🔥 이미지 경로: \(fullURL)")  // ✅ 여긴 가능
+        print("🔥 이미지 경로: \(fullURL)")
 
         return HStack(spacing: 16) {
             Text("\(rank)")

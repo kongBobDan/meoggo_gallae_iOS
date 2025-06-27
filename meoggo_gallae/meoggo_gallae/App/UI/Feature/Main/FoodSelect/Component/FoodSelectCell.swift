@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FoodSelectCell: View {
-    let image: String  // 완성된 URL string
+    let image: String
     let name: String
 
     var body: some View {

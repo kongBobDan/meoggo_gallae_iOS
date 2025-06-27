@@ -81,7 +81,6 @@ struct HomeView: View {
                         ]
                     case .failure(let error):
                         print("잔반 통계 불러오기 실패: \(error.localizedDescription)")
-                        // ✅ 실패 시 더미 데이터 사용
                         wasteData = [
                             WasteData(category: "적게 남긴 날", percentage: 60, color: .p[400]),
                             WasteData(category: "적당히 먹은 날", percentage: 25, color: .b[600]),
